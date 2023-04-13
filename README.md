@@ -3,7 +3,7 @@
 
 ### Code for adding a list 
 
-'''
+'
 function addATodoItem(event) {
   event.preventDefault();
 
@@ -15,11 +15,11 @@ function addATodoItem(event) {
 
   renderTodoList();
 }
-'''
+'
 
 ### Code for deleting a list
 
-'''
+'
 function performDelete(index) {
   const confirmDelete = window.confirm(`TODO Item: ${todoList[index]} \nAre you sure you want to delete this todo item?`);
 
@@ -29,11 +29,11 @@ function performDelete(index) {
   }
 
 }
-'''
+'
 
 ### Rendering the lists
 
-'''
+'
 function renderTodoList() {
   const listToRender = todoList.map((listItem, index) => `
       <div class="list-item">
@@ -43,4 +43,4 @@ function renderTodoList() {
     `);
   todoListElement.innerHTML = listToRender.join('');
 }
-'''
+'
