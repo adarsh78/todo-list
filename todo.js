@@ -1,28 +1,43 @@
 const todoInputElement = document.getElementById('todoInput');
-const addBtnElement = document.getElementById('add');
-const updateBtnElement = document.getElementById('update');
+const addUpdateBtnElement = document.getElementById('addupdate');
+const addTextElement = document.getElementById('addtext');
+const updateTextElement = document.getElementById('updatetext');
 const todoListElement = document.getElementById('todo-list');
 
-addBtnElement.addEventListener('click', addATodoItem);
-updateBtnElement.addEventListener('click', updateTodoItem);
+addUpdateBtnElement.addEventListener('click', performAddUpdate);
 
 let todoList = [];
 let updateIndex = -1;
 
-function addATodoItem(event) {
+function performAddUpdate(event) {
   event.preventDefault();
 
+  if(updateIndex === -1) {
+    addATodoItem();
+  } else {
+    updateTodoItem()
+  }
+}
+
+function addATodoItem() {
   const todoText = todoInputElement.value;
   if (!todoText.length) return;
 
   todoList.push(todoText);
   todoInputElement.value = '';
 
+  updateStore();
   renderTodoList();
 }
 
 function renderTodoList() {
-  const listToRender = todoList.map((listItem, index) => `
+  let list = window.localStorage.getItem('todoList');
+  if(!list) return;
+
+  list = JSON.parse(list);
+  todoList = list;
+
+  const listToRender = list.map((listItem, index) => `
       <div class="list-item">
         <div>${listItem}</div>
         <div>
@@ -39,36 +54,40 @@ function performDelete(index) {
 
   if (confirmDelete) {
     todoList = todoList.filter((item, i) => i !== index);
+    updateStore();
     renderTodoList();
   }
-
 }
 
 function performEdit(index) {
   const todoItem = todoList[index];
   todoInputElement.value = todoItem;
-  addBtnElement.style.display = 'none';
-  updateBtnElement.style.display = 'block';
+  addTextElement.style.display = 'none';
+  updateTextElement.style.display = 'block';
   updateIndex = index;
 }
 
-function updateTodoItem(event) {
-  event.preventDefault();
-
+function updateTodoItem() {
   if (updateIndex === -1) {
     return;
   }
 
   const todoText = todoInputElement.value;
   todoList[updateIndex] = todoText;
+  todoInputElement.value = '';
 
   reset();
+  updateStore();
   renderTodoList();
 }
 
+function updateStore() {
+  window.localStorage.setItem('todoList', JSON.stringify(todoList));
+}
+
 function reset() {
-  addBtnElement.style.display = 'block';
-  updateBtnElement.style.display = 'none';
+  addTextElement.style.display = 'block';
+  updateTextElement.style.display = 'none';
   updateIndex = -1;
 }
 
