@@ -6,6 +6,12 @@ const todoListElement = document.getElementById('todo-list');
 
 addUpdateBtnElement.addEventListener('click', performAddUpdate);
 
+/**
+ * {
+ *    value: string,
+ *    complete: boolean
+ * }
+ */
 let todoList = [];
 let updateIndex = -1;
 
@@ -23,7 +29,12 @@ function addATodoItem() {
   const todoText = todoInputElement.value;
   if (!todoText.length) return;
 
-  todoList.push(todoText);
+  const todo = {
+    value: todoText,
+    complete: false
+  }
+
+  todoList.push(todo);
   todoInputElement.value = '';
 
   updateStore();
@@ -39,10 +50,11 @@ function renderTodoList() {
 
   const listToRender = list.map((listItem, index) => `
       <div class="list-item">
-        <div>${listItem}</div>
+        <div style="${listItem.complete && 'text-decoration: line-through'}">${listItem.value}</div>
         <div>
           <button onclick="performEdit(${index})">edit</button>
           <button onclick="performDelete(${index})">delete</button>
+          <button onclick="performComplete(${index})" style="${listItem.complete && 'display: none'}">Complete</button>
         </div>
       </div>
     `);
@@ -61,7 +73,7 @@ function performDelete(index) {
 
 function performEdit(index) {
   const todoItem = todoList[index];
-  todoInputElement.value = todoItem;
+  todoInputElement.value = todoItem.value;
   addTextElement.style.display = 'none';
   updateTextElement.style.display = 'block';
   updateIndex = index;
@@ -73,10 +85,18 @@ function updateTodoItem() {
   }
 
   const todoText = todoInputElement.value;
-  todoList[updateIndex] = todoText;
+  todoList[updateIndex].value = todoText;
+  todoList[updateIndex].complete = false;
   todoInputElement.value = '';
 
   reset();
+  updateStore();
+  renderTodoList();
+}
+
+function performComplete(index) {
+  todoList[index].complete = true;
+
   updateStore();
   renderTodoList();
 }
